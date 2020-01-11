@@ -1,5 +1,5 @@
 ID: MyHanaApp
-_schema-version: "2.1"
+_schema-version: '2.1'
 version: 0.0.1
 modules:
   - name: db
@@ -19,11 +19,27 @@ modules:
     provides:
       - name: srv_api
         properties:
-          url: ${default-url}
+          url: '${default-url}'
     requires:
       - name: MyHanaApp-db-hdi-container
+      - name: app-uaa
+  - name: web
+    type: html5
+    path: web
+    requires:
+      - name: srv_api
+        group: destinations
+        properties:
+          name: srv_api
+          url: '~{url}'
+          forwardAuthToken: true
+      - name: app-uaa
 resources:
   - name: MyHanaApp-db-hdi-container
     type: com.sap.xs.hdi-container
     properties:
-      hdi-container-name: ${service-name}
+      hdi-container-name: '${service-name}'
+  - name: app-uaa
+    type: com.sap.xs.uaa-space
+    parameters:
+      path: ./xs-security.json
